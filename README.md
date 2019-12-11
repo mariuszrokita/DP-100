@@ -1,0 +1,2 @@
+# Introduction
+This repository contains various notebooks and resources that are part of my learning path towards the Microsoft [exam DP-100](https://docs.microsoft.com/en-us/learn/certifications/exams/dp-100).
