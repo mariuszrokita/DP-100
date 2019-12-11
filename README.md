@@ -6,6 +6,19 @@ This repository contains various notebooks and resources that are part of my lea
 ## Virtual environment
 
 ```shell
-conda create --name dp100 python=3.8 jupyter
+conda create --name dp100 python=3.7 jupyter
 conda activate dp100
+```
+
+## Install dependencies
+
+```shell
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+It is also worth installing the Jupyter Notebook Extensions:
+
+```shell
+pip install jupyter_contrib_nbextensions && jupyter contrib nbextension install
 ```
