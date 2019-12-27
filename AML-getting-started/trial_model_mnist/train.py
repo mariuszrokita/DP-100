@@ -3,11 +3,15 @@ import argparse
 import os
 import numpy as np
 import glob
+import time
+
+from datetime import datetime
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.externals import joblib
 
 from azureml.core import Run
+from azureml.core.model import Model
 # from utils import load_data
 
 import gzip
@@ -85,8 +89,22 @@ run.log('regularization rate', np.float(args.reg))
 run.log('accuracy', np.float(acc))
 
 os.makedirs('outputs', exist_ok=True)
-# note file saved in the outputs folder is automatically uploaded into experiment record
-joblib.dump(value=clf, filename='outputs/sklearn_mnist_model.pkl')
+
+# Note, file saved in the outputs folder is automatically uploaded into experiment record.
+model_filename = 'outputs/sklearn_mnist_model.pkl'
+joblib.dump(value=clf, filename=model_filename)
+
+# Due to latency we need to wait (not more than 60 seconds) until the model file is really uploaded. 
+timestamp = datetime.now()
+while (model_filename not in run.get_file_names()) or ((datetime.now() - timestamp).seconds <= 60) :
+    print("Need to wait...")
+    time.sleep(1)  # wait 1 second
+
+print('========================')
+print('Files associated with that run:')
+print(run.get_file_names())
+print('========================')
+
 
 # register an Azure ML model (it's only possible when training in the AMLS)
 local = args.local
@@ -94,9 +112,9 @@ print(f"Local: {local}, {type(local)}")
 
 if not local:
     print("Registering model...")   
-    model = run.register_model(model_name='sklearn_mnist_model.pkl',
-                               model_path='sklearn_mnist_model.pkl',
+    model = run.register_model(model_name='sklearn_mnist',
+                               model_path=os.path.join('.', 'outputs', 'sklearn_mnist_model.pkl'),
                                tags = {'area': "MNIST", 'type': "sklearn"},
                                description = "identify numbers")
-
+    
     print(model.name, model.id, model.version, sep='\t')
