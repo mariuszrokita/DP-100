@@ -1,4 +1,7 @@
 azureml-sdk[notebooks]
+azureml-train-automl==1.0.81
+azureml-automl-core==1.0.81
 matplotlib
-scikit-learn
-numpy
+scikit-learn<=0.20.3
+scipy<=1.1.0
+numpy<=1.16.2
